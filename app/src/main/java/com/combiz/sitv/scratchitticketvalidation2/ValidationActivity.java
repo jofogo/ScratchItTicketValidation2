@@ -56,9 +56,6 @@ public class ValidationActivity extends AppCompatActivity {
             case R.id.menu_logout:
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.menu_settings:
-                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-                break;
             default:
                 break;
         }
