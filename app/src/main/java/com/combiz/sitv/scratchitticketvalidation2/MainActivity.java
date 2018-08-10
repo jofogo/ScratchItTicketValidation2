@@ -3,9 +3,11 @@ package com.combiz.sitv.scratchitticketvalidation2;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,8 +19,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private final static int MY_PERMISSIONS_REQUEST_NECESSARY = 1;
@@ -27,7 +33,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkAndRequestPermissions();
+    }
 
+    public void loadValidationActivity (View view) {
+        Intent activityValidation = new Intent(this, ValidationActivity.class);
+        startActivity(activityValidation);
     }
 
     //Menu launcher
@@ -71,6 +82,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private boolean checkAndRequestPermissions() {
+        int permissionCAMERA = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+        int permissionPHONESTATE = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_PHONE_STATE);
 
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (permissionPHONESTATE != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if (permissionCAMERA != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this,
+                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), MY_PERMISSIONS_REQUEST_NECESSARY);
+            return false;
+        }
 
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_NECESSARY:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+
+                    quitApp();
+                }
+                break;
+        }
+    }
+
+    private void quitApp() {
+
+        finishAffinity();
+    }
 }
